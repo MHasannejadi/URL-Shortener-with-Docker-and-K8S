@@ -47,8 +47,7 @@ app.post("/api/shorten", upload.single("file"), async (req, res) => {
       const apiResponse = await axios(config);
       const { short_url: shortUrl } = apiResponse.data;
 
-      // cache for 5 minutes
-      redisClient.setEx(longUrl, 300, shortUrl);
+      redisClient.setEx(longUrl, process.env.REDIS_EXPIRE_TIME, shortUrl);
       res.json({
         longUrl: longUrl,
         shortUrl: shortUrl,
