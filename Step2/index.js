@@ -9,11 +9,11 @@ const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const localIP = "127.0.0.1";
+const redisContainer = process.env.REDIS_CONTAINER;
 const port = process.env.PORT || 3000;
 const hostname = os.hostname();
 
-const redisClient = redis.createClient(process.env.REDIS_PORT, localIP);
+const redisClient = redis.createClient(process.env.REDIS_PORT, "node-redis");
 redisClient.on("error", (err) => {
   console.log("Redis error:", err);
 });
@@ -47,7 +47,7 @@ app.post("/api/shorten", upload.single("file"), async (req, res) => {
       const apiResponse = await axios(config);
       const { short_url: shortUrl } = apiResponse.data;
 
-      redisClient.setEx(longUrl, process.env.REDIS_EXPIRE_TIME, shortUrl);
+      redisClient.setEx(longUrl, (process.env.REDIS_EXPIRE_TIME) * 60, shortUrl);
       res.json({
         longUrl: longUrl,
         shortUrl: shortUrl,
