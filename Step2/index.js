@@ -59,12 +59,12 @@ app.post("/api/shorten", upload.single("file"), async (req, res) => {
       });
     }
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // Start the server
 app.listen(port, () => {
-  // console.log(`Server listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
