@@ -4,20 +4,24 @@ const redis = require("redis");
 const axios = require("axios");
 const multer = require("multer");
 const os = require("os");
-
 const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 const redisContainer = process.env.REDIS_CONTAINER;
+const redisPort = process.env.REDIS_PORT;
 const port = process.env.PORT || 3000;
 const hostname = os.hostname();
 
-const redisClient = redis.createClient(process.env.REDIS_PORT, "node-redis");
+const redisClient = redis.createClient({
+  url: `redis://${redisContainer}:${redisPort}`,
+});
 redisClient.on("error", (err) => {
   console.log("Redis error:", err);
 });
-redisClient.connect();
+redisClient.connect().catch((err) => {
+  console.log(err);
+});
 
 app.post("/api/shorten", upload.single("file"), async (req, res) => {
   try {
@@ -27,7 +31,6 @@ app.post("/api/shorten", upload.single("file"), async (req, res) => {
     }
     const shortUrl = await redisClient.get(longUrl);
     if (shortUrl) {
-      console.log("Using cached URL:", shortUrl);
       res.json({
         longUrl: longUrl,
         shortUrl: shortUrl,
@@ -47,7 +50,7 @@ app.post("/api/shorten", upload.single("file"), async (req, res) => {
       const apiResponse = await axios(config);
       const { short_url: shortUrl } = apiResponse.data;
 
-      redisClient.setEx(longUrl, (process.env.REDIS_EXPIRE_TIME) * 60, shortUrl);
+      redisClient.setEx(longUrl, process.env.REDIS_EXPIRE_TIME * 60, shortUrl);
       res.json({
         longUrl: longUrl,
         shortUrl: shortUrl,
@@ -56,12 +59,12 @@ app.post("/api/shorten", upload.single("file"), async (req, res) => {
       });
     }
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  // console.log(`Server listening on port ${port}`);
 });
