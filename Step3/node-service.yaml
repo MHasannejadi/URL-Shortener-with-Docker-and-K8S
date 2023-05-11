@@ -8,6 +8,7 @@ spec:
   ports:
     - name: node-app
       protocol: TCP
+      
       port: 3030
       targetPort: 3030
-  type: LoadBalancer
+  type: ClusterIP

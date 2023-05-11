@@ -6,15 +6,15 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: node
+      app: node-app
   template:
     metadata:
       labels:
-        app: node
+        app: node-app
     spec:
       containers:
         - name: node-container
-          image: express-server
+          image: mohasan/url-shortener-app
           ports:
             - containerPort: 3030
           envFrom:

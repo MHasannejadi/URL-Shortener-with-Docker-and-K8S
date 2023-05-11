@@ -6,7 +6,6 @@ data:
   API_URL: https://api.apilayer.com/short_url/hash
   API_KEY: "0b2YvJXUDna0GoZHS7C7ZZzbLkKyHpXf"
   PORT: "3030"
-  ENDPOINT: "/api/shorten"
   REDIS_PORT: "6379"
-  REDIS_EXPIRE_TIME: "300"
-  REDIS_CONTAINER: "redis-service"
+  REDIS_EXPIRE_TIME: "5"
+  REDIS_CONTAINER: "node-redis"
