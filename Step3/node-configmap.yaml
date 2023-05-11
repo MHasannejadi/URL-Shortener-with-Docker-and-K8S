@@ -8,4 +8,4 @@ data:
   PORT: "3030"
   REDIS_PORT: "6379"
   REDIS_EXPIRE_TIME: "5"
-  REDIS_CONTAINER: "node-redis"
+  REDIS_CONTAINER: "redis-service"
